@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Feb  2 17:18:26 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  2 17:35:36 2009 (+0200)
+ * Last-Updated: Mon Feb  2 17:59:25 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 9
+ *     Update #: 10
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -55,7 +55,9 @@ void		recv_callback(t_select *select, t_client *client)
   if (select_mesg_cmp(client, "") == 0)
     return;
   t = loadmod_init("modules/enabled");
-  loadmod_exec_hook_point(t, "hook_test", (void*)client);
+  loadmod_exec_hook_point(t, "init", (void*)client);
+  loadmod_exec_hook_point(t, "recv", (void*)client);
+  loadmod_exec_hook_point(t, "end", (void*)client);
   loadmod_free(t);
 }
 

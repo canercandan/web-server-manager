@@ -1,0 +1,135 @@
+/* call.c --- 
+ * 
+ * Filename: call.c
+ * Description: 
+ * Author: Caner Candan
+ * Maintainer: 
+ * Created: Mon Jan  5 22:49:26 2009 (+0200)
+ * Version: 
+ * Last-Updated: Mon Feb  2 17:53:21 2009 (+0200)
+ *           By: Caner Candan
+ *     Update #: 167
+ * URL: 
+ * Keywords: 
+ * Compatibility: 
+ * 
+ */
+
+/* Commentary: 
+ * 
+ * 
+ * 
+ */
+
+/* Change log:
+ * 
+ * 
+ */
+
+/* This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 3, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+ * Floor, Boston, MA 02110-1301, USA.
+ */
+
+/* Code: */
+
+#include <stdio.h>
+#include <time.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <escienta.h>
+#include "logger.h"
+
+static int	fd = 0;
+
+static int	on_load(void)
+{
+  fd = open(LOG_FILE, O_WRONLY | O_APPEND | O_CREAT, 0644);
+  return (0);
+}
+
+static void	on_unload(void)
+{
+  close(fd);
+}
+
+static void	write_file(char *mesg)
+{
+  write(fd, mesg, strlen(mesg));
+  printf(mesg);
+}
+
+static void	prefix(void)
+{
+  time_t	tm;
+  char		*date;
+  char		buf[128];
+
+  time(&tm);
+  date = ctime(&tm);
+  date[strlen(date) - 1] = 0;
+  buf[0] = 0;
+  snprintf(buf, 128, "[%s] ", date);
+  write_file(buf);
+}
+
+static t_res	log_init(t_hook_result* t)
+{
+  char		buf[128];
+
+  (void)t;
+  prefix();
+  buf[0] = 0;
+  snprintf(buf, 128, "init ...\n");
+  write_file(buf);
+  return (R_CONTINUE);
+}
+
+static t_res	log_recv(t_hook_result* t)
+{
+  char		buf[128];
+  t_client	*client;
+
+  client = t->data;
+  if (select_mesg_cmp(client, "") == 0)
+    return (R_END);
+  prefix();
+  snprintf(buf, 128, "recv ... [%s]\n", select_recv(client));
+  write_file(buf);
+  return (R_CONTINUE);
+}
+
+static t_res	log_end(t_hook_result* t)
+{
+  char		buf[128];
+
+  (void)t;
+  prefix();
+  buf[0] = 0;
+  snprintf(buf, 128, "end ...\n");
+  write_file(buf);
+  return (R_CONTINUE);
+}
+
+void	call(t_module *t)
+{
+  loadmod_set_module_name(t, "logger", 0.1);
+  loadmod_set_module_callback(t, on_load, on_unload);
+  loadmod_add_hook_point(t, "init", VERY_FIRST, log_init);
+  loadmod_add_hook_point(t, "end", VERY_FIRST, log_end);
+  loadmod_add_hook_point(t, "recv", VERY_FIRST, log_recv);
+}
+
+/* call.c ends here */
