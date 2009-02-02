@@ -1,14 +1,14 @@
-/* recv_callback.c --- 
+/* call.c --- 
  * 
- * Filename: recv_callback.c
+ * Filename: call.c
  * Description: 
  * Author: Caner Candan
  * Maintainer: 
- * Created: Mon Feb  2 17:18:26 2009 (+0200)
+ * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  2 22:28:37 2009 (+0200)
+ * Last-Updated: Mon Feb  2 22:23:01 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 18
+ *     Update #: 182
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -44,27 +44,35 @@
 
 /* Code: */
 
-#include <stdio.h>
-#include "escienta.h"
+#include <escienta.h>
 
-void		recv_callback(t_select *select, t_client *client)
+static int	on_load(void)
 {
-  t_loadmod	*t;
-
-  (void)select;
-  if (select_mesg_cmp(client, "") == 0)
-    return;
-  t = loadmod_init("modules/enabled");
-  loadmod_exec_hook_point(t, "init", (void*)client);
-  loadmod_exec_hook_point(t, "recv", (void*)client);
-
-  if (select_mesg_cmp(client, "create_web_site") == 0)
-    loadmod_exec_hook_point(t, "create_web_site", (void*)client);
-  else if (select_mesg_cmp(client, "delete_web_site") == 0)
-    loadmod_exec_hook_point(t, "delete_web_site", (void*)client);
-
-  loadmod_exec_hook_point(t, "end", (void*)client);
-  loadmod_free(t);
+  return (0);
 }
 
-/* recv_callback.c ends here */
+static void	on_unload(void)
+{
+}
+
+static t_res	create(t_hook_result *t)
+{
+  (void)t;
+  return (R_END);
+}
+
+static t_res	delete(t_hook_result *t)
+{
+  (void)t;
+  return (R_END);
+}
+
+void	call(t_module *t)
+{
+  loadmod_set_module_name(t, "apache", 0.1);
+  loadmod_set_module_callback(t, on_load, on_unload);
+  loadmod_add_hook_point(t, "create_web_site", MIDDLE, create);
+  loadmod_add_hook_point(t, "delete_web_site", MIDDLE, delete);
+}
+
+/* call.c ends here */

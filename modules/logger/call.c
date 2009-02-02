@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  2 17:53:21 2009 (+0200)
+ * Last-Updated: Mon Feb  2 22:29:28 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 167
+ *     Update #: 173
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -85,7 +85,7 @@ static void	prefix(void)
   write_file(buf);
 }
 
-static t_res	log_init(t_hook_result* t)
+static t_res	log_init(t_hook_result *t)
 {
   char		buf[128];
 
@@ -97,7 +97,19 @@ static t_res	log_init(t_hook_result* t)
   return (R_CONTINUE);
 }
 
-static t_res	log_recv(t_hook_result* t)
+static t_res	log_end(t_hook_result *t)
+{
+  char		buf[128];
+
+  (void)t;
+  prefix();
+  buf[0] = 0;
+  snprintf(buf, 128, "end ...\n");
+  write_file(buf);
+  return (R_CONTINUE);
+}
+
+static t_res	log_recv(t_hook_result *t)
 {
   char		buf[128];
   t_client	*client;
@@ -111,14 +123,30 @@ static t_res	log_recv(t_hook_result* t)
   return (R_CONTINUE);
 }
 
-static t_res	log_end(t_hook_result* t)
+static t_res	log_create(t_hook_result *t)
 {
   char		buf[128];
+  t_client	*client;
 
-  (void)t;
+  client = t->data;
+  if (select_mesg_cmp(client, "") == 0)
+    return (R_END);
   prefix();
-  buf[0] = 0;
-  snprintf(buf, 128, "end ...\n");
+  snprintf(buf, 128, "create web site ... [%s]\n", select_recv(client));
+  write_file(buf);
+  return (R_CONTINUE);
+}
+
+static t_res	log_delete(t_hook_result *t)
+{
+  char		buf[128];
+  t_client	*client;
+
+  client = t->data;
+  if (select_mesg_cmp(client, "") == 0)
+    return (R_END);
+  prefix();
+  snprintf(buf, 128, "delete web site ... [%s]\n", select_recv(client));
   write_file(buf);
   return (R_CONTINUE);
 }
@@ -130,6 +158,8 @@ void	call(t_module *t)
   loadmod_add_hook_point(t, "init", VERY_FIRST, log_init);
   loadmod_add_hook_point(t, "end", VERY_FIRST, log_end);
   loadmod_add_hook_point(t, "recv", VERY_FIRST, log_recv);
+  loadmod_add_hook_point(t, "create_web_site", VERY_FIRST, log_create);
+  loadmod_add_hook_point(t, "delete_web_site", VERY_FIRST, log_delete);
 }
 
 /* call.c ends here */
