@@ -1,14 +1,15 @@
-/* recv_callback.c --- 
+<?php
+/* functions_es.php --- 
  * 
- * Filename: recv_callback.c
+ * Filename: functions_es.php
  * Description: 
  * Author: Caner Candan
  * Maintainer: 
- * Created: Mon Feb  2 17:18:26 2009 (+0200)
+ * Created: Thu Feb  5 15:18:11 2009 (+0200)
  * Version: 
- * Last-Updated: Thu Feb  5 14:45:53 2009 (+0200)
+ * Last-Updated: Thu Feb  5 15:45:04 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 24
+ *     Update #: 7
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -44,33 +45,33 @@
 
 /* Code: */
 
-#include <stdio.h>
-#include "escienta.h"
-
-void		recv_callback(t_select *select, t_client *client)
+function	es_connectto($ip, $port)
 {
-  t_loadmod	*t;
-
-  (void)select;
-  if (select_mesg_cmp(client, "") == 0)
-    return;
-  t = loadmod_init("modules/enabled");
-  loadmod_exec_hook_point(t, "init", (void*)client);
-  loadmod_exec_hook_point(t, "recv", (void*)client);
-
-  if (select_mesg_cmp_field(client, "create_web_site", 0) == 0)
+  if (($fp = stream_socket_client('tcp://' . $ip . ':' . $port, $errno, $errstr, 30)) == 0)
     {
-      select_send(client, "create_web_site ok\n");
-      loadmod_exec_hook_point(t, "create_web_site", (void*)client);
+      echo "$errstr ($errno)\n";
+      exit(-1);
     }
-  else if (select_mesg_cmp_field(client, "delete_web_site", 0) == 0)
-    {
-      select_send(client, "delete_web_site ok\n");
-      loadmod_exec_hook_point(t, "delete_web_site", (void*)client);
-    }
-
-  loadmod_exec_hook_point(t, "end", (void*)client);
-  loadmod_free(t);
+  return ($fp);
 }
 
-/* recv_callback.c ends here */
+function	es_sendto($fp, $mesg)
+{
+  fwrite($fp, $mesg);
+}
+
+function	es_recvfrom($fp)
+{
+  if (!feof($fp))
+    return (fgets($fp, 1024));
+  return ("");
+}
+
+function	es_close($fp)
+{
+  fclose($fp);
+}
+
+/* functions_es.php ends here */
+
+?>
