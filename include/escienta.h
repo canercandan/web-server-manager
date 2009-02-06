@@ -6,9 +6,9 @@
 // Maintainer: 
 // Created: Mon Feb  2 17:15:52 2009 (+0200)
 // Version: 
-// Last-Updated: Mon Feb  2 17:17:40 2009 (+0200)
+// Last-Updated: Sat Feb  7 01:01:21 2009 (+0200)
 //           By: Caner Candan
-//     Update #: 3
+//     Update #: 14
 // URL: 
 // Keywords: 
 // Compatibility: 
@@ -63,9 +63,16 @@
 ** enumerators
 */
 
+typedef enum {STAT_IN, STAT_OUT}	t_client_stat;
+
 /*
 ** structures
 */
+
+typedef struct	s_client_data
+{
+  t_client_stat	stat;
+}		t_client_data;
 
 /*
 ** variables
@@ -76,6 +83,8 @@
 */
 
 void	recv_callback(t_select*, t_client*);
+void	addclient_callback(t_select*, t_client*);
+void	delclient_callback(t_select*, t_client*);
 
 #endif /* !__ESCIENTA_H__ */
 

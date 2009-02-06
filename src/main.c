@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Feb  2 17:15:33 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  2 17:35:41 2009 (+0200)
+ * Last-Updated: Sat Feb  7 00:46:21 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 11
+ *     Update #: 17
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -51,7 +51,9 @@ int		main(void)
   t_select	*t;
 
   t = select_init();
-  select_set_callback(t, recv_callback, NULL, NULL);
+  select_set_callback(t, CB_RECV, recv_callback, NULL);
+  select_set_callback(t, CB_ADDCLIENT, addclient_callback, NULL);
+  select_set_callback(t, CB_DELCLIENT, delclient_callback, NULL);
   select_set_signal(t);
   select_exec(t, 4242);
   return (0);

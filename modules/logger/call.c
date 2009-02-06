@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  2 22:29:28 2009 (+0200)
+ * Last-Updated: Fri Feb  6 16:40:34 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 173
+ *     Update #: 177
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -123,6 +123,20 @@ static t_res	log_recv(t_hook_result *t)
   return (R_CONTINUE);
 }
 
+static t_res	log_send(t_hook_result *t)
+{
+  char		buf[128];
+  t_client	*client;
+
+  client = t->data;
+  if (select_mesg_cmp(client, "") == 0)
+    return (R_END);
+  prefix();
+  snprintf(buf, 128, "send ... [%s]\n", client->buf_write);
+  write_file(buf);
+  return (R_CONTINUE);
+}
+
 static t_res	log_create(t_hook_result *t)
 {
   char		buf[128];
@@ -158,6 +172,7 @@ void	call(t_module *t)
   loadmod_add_hook_point(t, "init", VERY_FIRST, log_init);
   loadmod_add_hook_point(t, "end", VERY_FIRST, log_end);
   loadmod_add_hook_point(t, "recv", VERY_FIRST, log_recv);
+  loadmod_add_hook_point(t, "send", VERY_FIRST, log_send);
   loadmod_add_hook_point(t, "create_web_site", VERY_FIRST, log_create);
   loadmod_add_hook_point(t, "delete_web_site", VERY_FIRST, log_delete);
 }

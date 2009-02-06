@@ -6,9 +6,9 @@
 ## Maintainer: 
 ## Created: Mon Feb  2 17:07:05 2009 (+0200)
 ## Version: 
-## Last-Updated: Mon Feb  2 17:15:06 2009 (+0200)
+## Last-Updated: Sat Feb  7 00:50:25 2009 (+0200)
 ##           By: Caner Candan
-##     Update #: 6
+##     Update #: 7
 ## URL: 
 ## Keywords: 
 ## Compatibility: 
@@ -71,8 +71,10 @@ HEADERS		=	\
 			$(PATH_INCLUDE)/list.h
 
 SRCS		=	\
-			$(PATH_SRC)/main.c		\
-			$(PATH_SRC)/recv_callback.c
+			$(PATH_SRC)/main.c			\
+			$(PATH_SRC)/recv_callback.c		\
+			$(PATH_SRC)/addclient_callback.c	\
+			$(PATH_SRC)/delclient_callback.c
 
 OBJS		=	$(SRCS:.c=.o)
 

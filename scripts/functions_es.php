@@ -7,9 +7,9 @@
  * Maintainer: 
  * Created: Thu Feb  5 15:18:11 2009 (+0200)
  * Version: 
- * Last-Updated: Thu Feb  5 15:45:04 2009 (+0200)
+ * Last-Updated: Fri Feb  6 17:23:38 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 7
+ *     Update #: 29
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -45,13 +45,17 @@
 
 /* Code: */
 
-function	es_connectto($ip, $port)
+function	es_connectto($ip, $port, $login, $passwd)
 {
-  if (($fp = stream_socket_client('tcp://' . $ip . ':' . $port, $errno, $errstr, 30)) == 0)
+  if (($fp = stream_socket_client("tcp://$ip:$port",
+				  $errno, $errstr, 30)) == 0)
     {
       echo "$errstr ($errno)\n";
       exit(-1);
     }
+  es_sendto($fp, "login $login $passwd\n");
+  if (es_recvfrom($fp) != "ok\n")
+    exit(-1);
   return ($fp);
 }
 
@@ -69,6 +73,9 @@ function	es_recvfrom($fp)
 
 function	es_close($fp)
 {
+  es_sendto($fp, "logout\n");
+  if (es_recvfrom($fp) != "ok\n")
+    exit(-1);
   fclose($fp);
 }
 

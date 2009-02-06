@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Feb  2 17:18:26 2009 (+0200)
  * Version: 
- * Last-Updated: Thu Feb  5 14:45:53 2009 (+0200)
+ * Last-Updated: Sat Feb  7 01:33:58 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 24
+ *     Update #: 54
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -50,6 +50,7 @@
 void		recv_callback(t_select *select, t_client *client)
 {
   t_loadmod	*t;
+  t_client_data	*cd;
 
   (void)select;
   if (select_mesg_cmp(client, "") == 0)
@@ -58,17 +59,37 @@ void		recv_callback(t_select *select, t_client *client)
   loadmod_exec_hook_point(t, "init", (void*)client);
   loadmod_exec_hook_point(t, "recv", (void*)client);
 
-  if (select_mesg_cmp_field(client, "create_web_site", 0) == 0)
+  cd = client->data;
+
+  if (select_mesg_cmp_field(client, "login", 0) == 0)
+    {
+      if (loadmod_exec_hook_point(t, "login", (void*)client) == R_FOUND)
+	select_send(client, "login ok\n");
+      else
+	select_send(client, "login ko\n");
+    }
+  else if (select_mesg_cmp_field(client, "logout", 0) == 0)
+    {
+      loadmod_exec_hook_point(t, "logout", (void*)client);
+    }
+  else if (cd->stat == STAT_IN &&
+	   select_mesg_cmp_field(client, "create_web_site", 0) == 0)
     {
       select_send(client, "create_web_site ok\n");
       loadmod_exec_hook_point(t, "create_web_site", (void*)client);
     }
-  else if (select_mesg_cmp_field(client, "delete_web_site", 0) == 0)
+  else if (cd->stat == STAT_IN &&
+	   select_mesg_cmp_field(client, "delete_web_site", 0) == 0)
     {
       select_send(client, "delete_web_site ok\n");
       loadmod_exec_hook_point(t, "delete_web_site", (void*)client);
     }
+  else
+    {
+      select_send(client, "not found\n");
+    }
 
+  loadmod_exec_hook_point(t, "send", (void*)client);
   loadmod_exec_hook_point(t, "end", (void*)client);
   loadmod_free(t);
 }
