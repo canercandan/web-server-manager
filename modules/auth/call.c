@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Sat Feb  7 10:58:38 2009 (+0200)
+ * Last-Updated: Sat Feb  7 23:06:43 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 202
+ *     Update #: 208
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -69,9 +69,9 @@ static t_res	login(t_hook_result *t)
       select_mesg_cmp_field(client, passwd, 2) == 0)
     {
       cd->stat = STAT_IN;
-      return (R_FOUND);
+      return (R_END);
     }
-  return (R_END);
+  return (R_ERROR);
 }
 
 static t_res	logout(t_hook_result *t)
@@ -85,12 +85,23 @@ static t_res	logout(t_hook_result *t)
   return (R_END);
 }
 
+static t_res	status(t_hook_result *t)
+{
+  t_client	*client;
+  t_client_data	*cd;
+
+  client = t->data;
+  cd = client->data;
+  return ((cd->stat == STAT_IN) ? R_END : R_ERROR);
+}
+
 void	call(t_module *t)
 {
   loadmod_set_module_name(t, "auth", 0.1);
   loadmod_set_module_callback(t, on_load, on_unload);
   loadmod_add_hook_point(t, "login", MIDDLE, login);
   loadmod_add_hook_point(t, "logout", MIDDLE, logout);
+  loadmod_add_hook_point(t, "status", MIDDLE, status);
 }
 
 /* call.c ends here */

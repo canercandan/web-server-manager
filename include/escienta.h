@@ -6,9 +6,9 @@
 // Maintainer: 
 // Created: Mon Feb  2 17:15:52 2009 (+0200)
 // Version: 
-// Last-Updated: Sat Feb  7 01:01:21 2009 (+0200)
+// Last-Updated: Sat Feb  7 19:33:33 2009 (+0200)
 //           By: Caner Candan
-//     Update #: 14
+//     Update #: 18
 // URL: 
 // Keywords: 
 // Compatibility: 
@@ -63,7 +63,7 @@
 ** enumerators
 */
 
-typedef enum {STAT_IN, STAT_OUT}	t_client_stat;
+typedef enum {STAT_NOT, STAT_IN, STAT_OUT}	t_client_stat;
 
 /*
 ** structures
@@ -73,6 +73,12 @@ typedef struct	s_client_data
 {
   t_client_stat	stat;
 }		t_client_data;
+
+typedef struct	s_cmd
+{
+  char		*name;
+  t_client_stat	stat;
+}		t_cmd;
 
 /*
 ** variables

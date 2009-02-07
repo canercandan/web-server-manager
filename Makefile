@@ -6,9 +6,9 @@
 ## Maintainer: 
 ## Created: Mon Feb  2 17:07:05 2009 (+0200)
 ## Version: 
-## Last-Updated: Sat Feb  7 00:50:25 2009 (+0200)
+## Last-Updated: Sat Feb  7 19:10:36 2009 (+0200)
 ##           By: Caner Candan
-##     Update #: 7
+##     Update #: 8
 ## URL: 
 ## Keywords: 
 ## Compatibility: 
@@ -160,6 +160,18 @@ $(PATH_SRC)/recv_callback.o	:	\
 				$(HEADERS)
 				-@$(ECHON) "*** Compiling $(PATH_SRC)/recv_callback.c to $@ "
 				-@$(CC) $(CFLAGS) -c $(PATH_SRC)/recv_callback.c -o $@ && $(SUCCESS) || $(FAILED)
+
+$(PATH_SRC)/addclient_callback.o	:	\
+				$(PATH_SRC)/addclient_callback.c	\
+				$(HEADERS)
+				-@$(ECHON) "*** Compiling $(PATH_SRC)/addclient_callback.c to $@ "
+				-@$(CC) $(CFLAGS) -c $(PATH_SRC)/addclient_callback.c -o $@ && $(SUCCESS) || $(FAILED)
+
+$(PATH_SRC)/delclient_callback.o	:	\
+				$(PATH_SRC)/delclient_callback.c	\
+				$(HEADERS)
+				-@$(ECHON) "*** Compiling $(PATH_SRC)/delclient_callback.c to $@ "
+				-@$(CC) $(CFLAGS) -c $(PATH_SRC)/delclient_callback.c -o $@ && $(SUCCESS) || $(FAILED)
 
 ######################################################################
 ### Makefile ends here
