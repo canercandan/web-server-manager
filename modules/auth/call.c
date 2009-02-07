@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Sat Feb  7 01:30:52 2009 (+0200)
+ * Last-Updated: Sat Feb  7 10:58:38 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 200
+ *     Update #: 202
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -76,7 +76,12 @@ static t_res	login(t_hook_result *t)
 
 static t_res	logout(t_hook_result *t)
 {
-  (void)t;
+  t_client	*client;
+  t_client_data	*cd;
+
+  client = t->data;
+  cd = client->data;
+  cd->stat = STAT_OUT;
   return (R_END);
 }
 

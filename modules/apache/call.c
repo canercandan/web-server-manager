@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  2 22:23:01 2009 (+0200)
+ * Last-Updated: Sat Feb  7 10:59:09 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 182
+ *     Update #: 183
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -71,8 +71,8 @@ void	call(t_module *t)
 {
   loadmod_set_module_name(t, "apache", 0.1);
   loadmod_set_module_callback(t, on_load, on_unload);
-  loadmod_add_hook_point(t, "create_web_site", MIDDLE, create);
-  loadmod_add_hook_point(t, "delete_web_site", MIDDLE, delete);
+  loadmod_add_hook_point(t, "web_create", MIDDLE, create);
+  loadmod_add_hook_point(t, "web_delete", MIDDLE, delete);
 }
 
 /* call.c ends here */
