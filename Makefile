@@ -6,9 +6,9 @@
 ## Maintainer: 
 ## Created: Mon Feb  2 17:07:05 2009 (+0200)
 ## Version: 
-## Last-Updated: Sat Feb  7 19:10:36 2009 (+0200)
+## Last-Updated: Mon Feb  9 11:18:38 2009 (+0200)
 ##           By: Caner Candan
-##     Update #: 8
+##     Update #: 12
 ## URL: 
 ## Keywords: 
 ## Compatibility: 
@@ -112,7 +112,12 @@ $(NAME)		:	$(OBJS)
 			-@$(ECHON) "*** Compiling $(OBJS) to $@ "
 			-@$(CC) -o $@ $(OBJS) $(LDFLAGS) && $(SUCCESS) || $(FAILED)
 
-all		:	$(NAME)
+shared		:
+			-@make -C modules/apache22
+			-@make -C modules/auth
+			-@make -C modules/logger
+
+all		:	$(NAME) shared
 
 clean		:
 			-@$(ECHON) "*** Removing $(PATH_SRC)/*~ "
@@ -143,7 +148,7 @@ tar		:
 			-@$(TAR) $(PATH_TAR)/$(PATTERN)-`$(CAT) $(FILE_VERSION)`.tgz Makefile $(DOCS) $(HEADERS) $(SRCS) && $(SUCCESS) || $(FAILED)
 			-@$(ECHO) "*** New version `$(CAT) $(FILE_VERSION)` is available "
 
-.PHONY		:	all clean fclean re tar
+.PHONY		:	all clean fclean re tar shared
 
 .c.o		:
 			-@$(ECHON) "*** Compiling $< to $@ "
