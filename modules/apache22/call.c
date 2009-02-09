@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  9 10:55:38 2009 (+0200)
+ * Last-Updated: Mon Feb  9 12:31:50 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 186
+ *     Update #: 214
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -44,6 +44,9 @@
 
 /* Code: */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
 #include <escienta.h>
 #include "apache22.h"
 
