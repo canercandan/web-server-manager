@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Fri Feb  6 16:40:34 2009 (+0200)
+ * Last-Updated: Mon Feb  9 15:52:13 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 177
+ *     Update #: 178
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -56,7 +56,8 @@ static int	fd = 0;
 
 static int	on_load(void)
 {
-  fd = open(LOG_FILE, O_WRONLY | O_APPEND | O_CREAT, 0644);
+  if ((fd = open(LOG_FILE, O_WRONLY | O_APPEND | O_CREAT, 0644)) < 0)
+    return (-1);
   return (0);
 }
 

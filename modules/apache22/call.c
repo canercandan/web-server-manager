@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  9 12:31:50 2009 (+0200)
+ * Last-Updated: Mon Feb  9 18:00:21 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 214
+ *     Update #: 256
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -46,17 +46,49 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <escienta.h>
 #include "apache22.h"
 
+static int	fd = 0;
+
+static void	reload_apache()
+{
+  pid_t		pid;
+
+  if ((pid = fork()) == 0)
+    {
+      execl("/usr/local/etc/rc.d/apache22",
+	    "apache22", "reload", (char*)0);
+      exit(-1);
+    }
+}
+
+static int	next_id()
+{
+  char		buf[READ_SIZE];
+  int		nb;
+
+  if ((nb = read(fd, buf, READ_SIZE)) < 0)
+    return (-1);
+  buf[nb] = 0;
+  
+}
+
 static int	on_load(void)
 {
+  if ((fd = open(ID_FILE, O_RDWR | O_CREAT, 0644)) < 0)
+    return (-1);
   return (0);
 }
 
 static void	on_unload(void)
 {
+  reload_apache();
+  close(fd);
 }
 
 static t_res	create(t_hook_result *t)
