@@ -6,9 +6,9 @@
 ## Maintainer: 
 ## Created: Mon Jan  5 22:53:36 2009 (+0200)
 ## Version: 
-## Last-Updated: Mon Feb  2 22:22:48 2009 (+0200)
+## Last-Updated: Mon Feb  9 10:58:10 2009 (+0200)
 ##           By: Caner Candan
-##     Update #: 16
+##     Update #: 19
 ## URL: 
 ## Keywords: 
 ## Compatibility: 
@@ -45,7 +45,7 @@
 ## 
 ### Code:
 
-PATTERN		=	apache
+PATTERN		=	apache22
 
 PATH_BIN	=	.
 PATH_SRC	=	.
@@ -68,7 +68,8 @@ HEADERS		=	\
 			$(PATH_INCLUDE)/escienta.h	\
 			$(PATH_INCLUDE)/list.h		\
 			$(PATH_INCLUDE)/select.h	\
-			$(PATH_INCLUDE)/loadmod.h
+			$(PATH_INCLUDE)/loadmod.h	\
+			$(PATH_SRC)/apache22.h
 
 SRCS		=	\
 			$(PATH_SRC)/call.c

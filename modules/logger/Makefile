@@ -6,9 +6,9 @@
 ## Maintainer: 
 ## Created: Mon Jan  5 22:53:36 2009 (+0200)
 ## Version: 
-## Last-Updated: Mon Feb  2 17:53:10 2009 (+0200)
+## Last-Updated: Mon Feb  9 10:52:54 2009 (+0200)
 ##           By: Caner Candan
-##     Update #: 14
+##     Update #: 15
 ## URL: 
 ## Keywords: 
 ## Compatibility: 
@@ -69,7 +69,7 @@ HEADERS		=	\
 			$(PATH_INCLUDE)/list.h		\
 			$(PATH_INCLUDE)/select.h	\
 			$(PATH_INCLUDE)/loadmod.h	\
-			logger.h
+			$(PATH_SRC)/logger.h
 
 SRCS		=	\
 			$(PATH_SRC)/call.c

@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Sat Feb  7 10:59:09 2009 (+0200)
+ * Last-Updated: Mon Feb  9 10:55:38 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 183
+ *     Update #: 186
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -45,6 +45,7 @@
 /* Code: */
 
 #include <escienta.h>
+#include "apache22.h"
 
 static int	on_load(void)
 {
@@ -69,7 +70,7 @@ static t_res	delete(t_hook_result *t)
 
 void	call(t_module *t)
 {
-  loadmod_set_module_name(t, "apache", 0.1);
+  loadmod_set_module_name(t, "apache22", 0.1);
   loadmod_set_module_callback(t, on_load, on_unload);
   loadmod_add_hook_point(t, "web_create", MIDDLE, create);
   loadmod_add_hook_point(t, "web_delete", MIDDLE, delete);
