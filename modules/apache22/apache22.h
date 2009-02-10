@@ -6,9 +6,9 @@
 // Maintainer: 
 // Created: Mon Feb  9 10:55:58 2009 (+0200)
 // Version: 
-// Last-Updated: Mon Feb  9 15:53:35 2009 (+0200)
+// Last-Updated: Tue Feb 10 12:11:33 2009 (+0200)
 //           By: Caner Candan
-//     Update #: 9
+//     Update #: 10
 // URL: 
 // Keywords: 
 // Compatibility: 
@@ -55,7 +55,7 @@
 # define CONF_DIR	"/usr/local/etc/apache22/escienta"
 # define ID_FILE	"ID"
 
-# define READ_SIZE	128
+# define BUFF_SIZE	128
 
 /*
 ** type definitions

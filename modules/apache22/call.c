@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  9 18:00:21 2009 (+0200)
+ * Last-Updated: Tue Feb 10 12:36:53 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 256
+ *     Update #: 279
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -49,11 +49,13 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <string.h>
 #include <stdio.h>
 #include <escienta.h>
 #include "apache22.h"
 
 static int	fd = 0;
+static int	id = 0;
 
 static void	reload_apache()
 {
@@ -67,21 +69,35 @@ static void	reload_apache()
     }
 }
 
-static int	next_id()
+static int	get_next_id()
 {
-  char		buf[READ_SIZE];
+  char		buf[BUFF_SIZE];
   int		nb;
 
-  if ((nb = read(fd, buf, READ_SIZE)) < 0)
+  if ((nb = read(fd, buf, BUFF_SIZE)) < 0)
     return (-1);
   buf[nb] = 0;
-  
+  printf("*** readding [%s] [%d]\n", buf, nb);
+  if (nb == 0)
+    return (1);
+  return (atoi(buf));
+}
+
+static void	set_next_id()
+{
+  char		buf[BUFF_SIZE];
+
+  printf("*** writting [%d]\n", get_next_id());
+  snprintf(buf, BUFF_SIZE, "%d", get_next_id());
+  write(fd, buf, strlen(buf));
 }
 
 static int	on_load(void)
 {
   if ((fd = open(ID_FILE, O_RDWR | O_CREAT, 0644)) < 0)
     return (-1);
+  printf("id [%d]\n", get_next_id());
+  set_next_id();
   return (0);
 }
 
