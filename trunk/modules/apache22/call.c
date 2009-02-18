@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Tue Feb 10 12:36:53 2009 (+0200)
+ * Last-Updated: Wed Feb 18 22:16:56 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 279
+ *     Update #: 280
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -55,7 +55,7 @@
 #include "apache22.h"
 
 static int	fd = 0;
-static int	id = 0;
+//static int	id = 0;
 
 static void	reload_apache()
 {
