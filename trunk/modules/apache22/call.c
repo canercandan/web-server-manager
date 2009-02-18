@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Wed Feb 18 22:16:56 2009 (+0200)
+ * Last-Updated: Wed Feb 18 23:36:12 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 280
+ *     Update #: 298
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -54,9 +54,6 @@
 #include <escienta.h>
 #include "apache22.h"
 
-static int	fd = 0;
-//static int	id = 0;
-
 static void	reload_apache()
 {
   pid_t		pid;
@@ -73,30 +70,39 @@ static int	get_next_id()
 {
   char		buf[BUFF_SIZE];
   int		nb;
+  int		fd;
 
+  if ((fd = open(ID_FILE, O_RDONLY | O_CREAT, 0644)) < 0)
+    return (1);
   if ((nb = read(fd, buf, BUFF_SIZE)) < 0)
-    return (-1);
+    return (1);
+  close(fd);
   buf[nb] = 0;
+#ifdef DEBUG
   printf("*** readding [%s] [%d]\n", buf, nb);
+#endif /* !DEBUG */
   if (nb == 0)
     return (1);
-  return (atoi(buf));
+  return (atoi(buf) + 1);
 }
 
 static void	set_next_id()
 {
   char		buf[BUFF_SIZE];
+  int		fd;
 
+#ifdef DEBUG
   printf("*** writting [%d]\n", get_next_id());
+#endif /* !DEBUG */
   snprintf(buf, BUFF_SIZE, "%d", get_next_id());
+  if ((fd = open(ID_FILE, O_WRONLY | O_CREAT, 0644)) < 0)
+    return;
   write(fd, buf, strlen(buf));
+  close(fd);
 }
 
 static int	on_load(void)
 {
-  if ((fd = open(ID_FILE, O_RDWR | O_CREAT, 0644)) < 0)
-    return (-1);
-  printf("id [%d]\n", get_next_id());
   set_next_id();
   return (0);
 }
@@ -104,7 +110,6 @@ static int	on_load(void)
 static void	on_unload(void)
 {
   reload_apache();
-  close(fd);
 }
 
 static t_res	create(t_hook_result *t)
