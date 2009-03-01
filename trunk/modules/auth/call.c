@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Sat Feb  7 23:06:43 2009 (+0200)
+ * Last-Updated: Sun Mar  1 13:12:38 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 208
+ *     Update #: 215
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -69,6 +69,7 @@ static t_res	login(t_hook_result *t)
       select_mesg_cmp_field(client, passwd, 2) == 0)
     {
       cd->stat = STAT_IN;
+      //select_send(client, "login tuit tuit\n");
       return (R_END);
     }
   return (R_ERROR);

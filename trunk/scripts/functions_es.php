@@ -7,9 +7,9 @@
  * Maintainer: 
  * Created: Thu Feb  5 15:18:11 2009 (+0200)
  * Version: 
- * Last-Updated: Fri Feb  6 17:23:38 2009 (+0200)
+ * Last-Updated: Sun Mar  1 13:34:10 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 29
+ *     Update #: 55
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -45,38 +45,51 @@
 
 /* Code: */
 
+define('FP', 'fp');
+
+$arr = array();
+
 function	es_connectto($ip, $port, $login, $passwd)
 {
-  if (($fp = stream_socket_client("tcp://$ip:$port",
-				  $errno, $errstr, 30)) == 0)
+  global $arr;
+
+  $arr = array();
+
+  if (($arr[FP] = stream_socket_client("tcp://$ip:$port", $errno, $errstr)) == 0)
     {
       echo "$errstr ($errno)\n";
       exit(-1);
     }
-  es_sendto($fp, "login $login $passwd\n");
-  if (es_recvfrom($fp) != "ok\n")
+  stream_set_timeout($arr[FP], 5);
+  es_sendto("login $login $passwd\n");
+  if (($res = es_recvfrom()) == "login ko\n")
     exit(-1);
-  return ($fp);
 }
 
-function	es_sendto($fp, $mesg)
+function	es_sendto($mesg)
 {
-  fwrite($fp, $mesg);
+  global $arr;
+
+  fwrite($arr[FP], $mesg);
 }
 
-function	es_recvfrom($fp)
+function	es_recvfrom()
 {
-  if (!feof($fp))
-    return (fgets($fp, 1024));
-  return ("");
+  global $arr;
+
+  if (!feof($arr[FP]))
+    return (fgets($arr[FP], 1024));
+  return ('');
 }
 
-function	es_close($fp)
+function	es_close()
 {
-  es_sendto($fp, "logout\n");
-  if (es_recvfrom($fp) != "ok\n")
+  global $arr;
+
+  es_sendto("logout\n");
+  if (es_recvfrom() == "logout ko\n")
     exit(-1);
-  fclose($fp);
+  fclose($arr[FP]);
 }
 
 /* functions_es.php ends here */

@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Feb  2 17:18:26 2009 (+0200)
  * Version: 
- * Last-Updated: Thu Feb 19 01:39:44 2009 (+0200)
+ * Last-Updated: Sun Mar  1 13:16:18 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 138
+ *     Update #: 149
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -64,21 +64,29 @@ static void	cmd_exec(t_loadmod *t, t_client *client)
   char		buf[128];
 
   cd = client->data;
+  buf[0] = 0;
   for (i = 0; cmds[i].name != NULL; i++)
     {
       if (select_mesg_cmp_field(client, cmds[i].name, 0) == 0)
 	{
-	  if ((cmds[i].stat == cd->stat ||
-	       cmds[i].stat == STAT_NOT) &&
+	  if ((cmds[i].stat == cd->stat || cmds[i].stat == STAT_NOT) &&
 	      loadmod_exec_hook_point(t, cmds[i].name, (void*)client)
 	      != R_ERROR)
 	    {
-	      if (client->buf_write != NULL)
-		snprintf(buf, 128, "%s ok\n", cmds[i].name);
+	      if (client->buf_write[0] == 0)
+		{
+		  snprintf(buf, 128, "%s ok\n", cmds[i].name);
+		  select_send(client, buf);
+		}
 	    }
 	  else
-	    snprintf(buf, 128, "%s ko\n", cmds[i].name);
-	  select_send(client, buf);
+	    {
+	      if (client->buf_write[0] == 0)
+		{
+		  snprintf(buf, 128, "%s ko\n", cmds[i].name);
+		  select_send(client, buf);
+		}
+	    }
 	  return;
 	}
     }

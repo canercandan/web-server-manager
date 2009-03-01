@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Thu Feb 19 01:36:37 2009 (+0200)
+ * Last-Updated: Sun Mar  1 13:16:43 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 326
+ *     Update #: 327
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -118,7 +118,7 @@ static t_res	create(t_hook_result *t)
   char		buf[128];
 
   set_next_id();
-  snprintf(buf, 128, "%d\n", get_id());
+  snprintf(buf, 128, "web_create %d\n", get_id());
   select_send((t_client*)t->data, buf);
   //t->data = (void*)get_id();
   return (R_END);
