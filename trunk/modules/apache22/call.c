@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Sun Mar  1 13:16:43 2009 (+0200)
+ * Last-Updated: Tue Mar  3 11:17:44 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 327
+ *     Update #: 392
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -69,10 +69,12 @@ static void	reload_apache()
 static int	get_id()
 {
   char		buf[BUFF_SIZE];
+  char		path[BUFF_SIZE];
   int		nb;
   int		fd;
 
-  if ((fd = open(ID_FILE, O_RDONLY | O_CREAT, 0644)) < 0)
+  snprintf(path, BUFF_SIZE, "%s/%s", CONF_DIR, ID_FILE);
+  if ((fd = open(path, O_RDONLY | O_CREAT, 0644)) < 0)
     return (0);
   if ((nb = read(fd, buf, BUFF_SIZE)) < 0)
     return (0);
@@ -89,6 +91,7 @@ static int	get_id()
 static void	set_next_id()
 {
   char		buf[BUFF_SIZE];
+  char		path[BUFF_SIZE];
   int		fd;
   int		nextid;
 
@@ -97,7 +100,8 @@ static void	set_next_id()
   printf("*** writting [%d]\n", nextid);
 #endif /* !DEBUG */
   snprintf(buf, BUFF_SIZE, "%d", nextid);
-  if ((fd = open(ID_FILE, O_WRONLY | O_CREAT, 0644)) < 0)
+  snprintf(path, BUFF_SIZE, "%s/%s", CONF_DIR, ID_FILE);
+  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
     return;
   write(fd, buf, strlen(buf));
   close(fd);
@@ -115,18 +119,82 @@ static void	on_unload(void)
 
 static t_res	create(t_hook_result *t)
 {
-  char		buf[128];
+  char		buf[BUFF_SIZE];
+  char		path[BUFF_SIZE];
+  int		id;
+  int		fd;
+  char		buf2[1024];
+  char		*domain;
+  t_client	*client;
 
+  client = t->data;
+  if ((domain = select_recv_field(client, 1)) == NULL)
+    return (R_ERROR);
   set_next_id();
-  snprintf(buf, 128, "web_create %d\n", get_id());
+  id = get_id();
+
+  snprintf(path, BUFF_SIZE, "%s/%d", HOST_DIR, id);
+  mkdir(path, 0777);
+  snprintf(path, BUFF_SIZE, "%s/%d/www", HOST_DIR, id);
+  mkdir(path, 0777);
+  snprintf(path, BUFF_SIZE, "%s/%d/logs", HOST_DIR, id);
+  mkdir(path, 0777);
+
+  snprintf(path, BUFF_SIZE, "%s/%d", CONF_DIR, id);
+  mkdir(path, 0777);
+
+  snprintf(path, BUFF_SIZE, "%s/%d/main.conf", CONF_DIR, id);
+  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
+    return (R_ERROR);
+  snprintf(buf2, 1024, VIRTUALHOST,
+	   HOST_DIR, id,
+	   domain, domain,
+	   HOST_DIR, id,
+	   HOST_DIR, id,
+	   HOST_DIR, id);
+  write(fd, buf2, strlen(buf2));
+  close(fd);
+
+  snprintf(path, BUFF_SIZE, "%s/%d/%s", HOST_DIR, id, DOMAIN_FILE);
+  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
+    return (R_ERROR);
+  write(fd, domain, strlen(domain));
+  close(fd);
+  free(domain);
+
+  snprintf(buf, BUFF_SIZE, "web_create %d\n", id);
   select_send((t_client*)t->data, buf);
-  //t->data = (void*)get_id();
   return (R_END);
 }
 
 static t_res	delete(t_hook_result *t)
 {
-  (void)t;
+  t_client	*client;
+  char		*tmp;
+  int		id;
+  char		path[BUFF_SIZE];
+
+  client = t->data;
+  if ((tmp = select_recv_field(client, 1)) == NULL)
+    return (R_ERROR);
+  id = atoi(tmp);
+  free(tmp);
+
+  snprintf(path, BUFF_SIZE, "%s/%d/main.conf", CONF_DIR, id);
+  unlink(path);
+  snprintf(path, BUFF_SIZE, "%s/%d", CONF_DIR, id);
+  rmdir(path);
+
+  snprintf(path, BUFF_SIZE, "%s/%d/%s", HOST_DIR, id, DOMAIN_FILE);
+  unlink(path);
+
+  snprintf(path, BUFF_SIZE, "%s/%d/logs", HOST_DIR, id);
+  rmdir(path);
+  snprintf(path, BUFF_SIZE, "%s/%d/www", HOST_DIR, id);
+  rmdir(path);
+  snprintf(path, BUFF_SIZE, "%s/%d", HOST_DIR, id);
+  rmdir(path);
+
   return (R_END);
 }
 

@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 
+ID=`id -u`
 CONF_DIR="/usr/local/etc/apache22/escienta"
+HOST_DIR="/hosts"
 
 success()
 {
@@ -13,12 +15,30 @@ failed()
     exit 0
 }
 
+is_root()
+{
+    if [ "$ID" != "0" ]; then
+        echo -n "/!\ You have to be a root. /!\\"
+        failed
+    fi
+}
+
 setup_dir()
 {
     echo -n "*** Set up directories"
     mkdir -p $CONF_DIR && success || failed
+    mkdir -p $HOST_DIR && success || failed
 }
 
+chmod_dir()
+{
+    echo -n "*** Chmod directories"
+    chmod 777 $CONF_DIR && success || failed
+    chmod 777 $HOST_DIR && success || failed
+}
+
+is_root
 setup_dir
+chmod_dir
 
 echo "Done"

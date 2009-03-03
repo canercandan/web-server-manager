@@ -6,9 +6,9 @@
 // Maintainer: 
 // Created: Mon Feb  9 10:55:58 2009 (+0200)
 // Version: 
-// Last-Updated: Tue Feb 10 12:11:33 2009 (+0200)
+// Last-Updated: Tue Mar  3 11:00:35 2009 (+0200)
 //           By: Caner Candan
-//     Update #: 10
+//     Update #: 62
 // URL: 
 // Keywords: 
 // Compatibility: 
@@ -53,9 +53,27 @@
 */
 
 # define CONF_DIR	"/usr/local/etc/apache22/escienta"
-# define ID_FILE	"ID"
+# define HOST_DIR	"/hosts"
+
+# define ID_FILE	".id"
+# define DOMAIN_FILE	".domain"
 
 # define BUFF_SIZE	128
+
+# define VIRTUALHOST				\
+  "<VirtualHost *:80>\n"			\
+  "ServerAdmin root@localhost\n"		\
+  "DocumentRoot %s/%d/www\n"			\
+  "ServerName %s\n"				\
+  "ServerAlias www.%s\n"			\
+  "ErrorLog %s/%d/logs/error.log\n"		\
+  "CustomLog %s/%d/logs/access.log common\n"	\
+  "<Directory \"%s/%d/www\">\n"			\
+  "AllowOverride All\n"				\
+  "Order allow,deny\n"				\
+  "Allow from all\n"				\
+  "</Directory>\n"				\
+  "</VirtualHost>\n"
 
 /*
 ** type definitions
