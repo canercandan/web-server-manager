@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Mon Feb  9 15:52:13 2009 (+0200)
+ * Last-Updated: Wed Mar  4 11:23:33 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 178
+ *     Update #: 180
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -174,8 +174,11 @@ void	call(t_module *t)
   loadmod_add_hook_point(t, "end", VERY_FIRST, log_end);
   loadmod_add_hook_point(t, "recv", VERY_FIRST, log_recv);
   loadmod_add_hook_point(t, "send", VERY_FIRST, log_send);
-  loadmod_add_hook_point(t, "create_web_site", VERY_FIRST, log_create);
-  loadmod_add_hook_point(t, "delete_web_site", VERY_FIRST, log_delete);
+  loadmod_add_hook_point(t, "web_create", VERY_FIRST, log_create);
+  loadmod_add_hook_point(t, "web_delete", VERY_FIRST, log_delete);
+  loadmod_add_comp_version(t, 0.1, NULL);
+  loadmod_add_comp_version(t, 0.2, NULL);
+  loadmod_add_comp_version(t, 0.3, NULL);
 }
 
 /* call.c ends here */

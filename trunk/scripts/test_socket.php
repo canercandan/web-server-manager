@@ -5,22 +5,28 @@ include_once('functions_es.php');
 
 echo "test socket!\n";
 
-es_connectto('localhost', 4242, 'demo', 'demo');
+$res = es_connectto('localhost', 4242, 'demo', 'demo');
 
-$domains = array('google.fr', 'yahoo.com', 'lycos.fr');
-$ids = array();
+var_dump($res);
 
-foreach ($domains as $value)
+$domains = array(120 => 'google.fr',
+		 340 => 'yahoo.com',
+		 555 => 'lycos.fr');
+
+/* echo "*** web_create\n"; */
+
+/* foreach ($domains as $key => $value) */
+/*   { */
+/*     es_sendto("web_create $key $value\n"); */
+/*     $res = explode(' ', trim(es_recvfrom())); */
+/*     var_dump($res); */
+/*   } */
+
+echo "*** web_delete\n";
+
+foreach ($domains as $key => $value)
   {
-    es_sendto("web_create $value\n");
-    list($cmd, $ids[$value]) = explode(' ', trim(es_recvfrom()));
-  }
-
-var_dump($ids);
-
-foreach ($ids as $key => $value)
-  {
-    es_sendto("web_delete $value\n");
+    es_sendto("web_delete $key\n");
     $res = explode(' ', trim(es_recvfrom()));
     var_dump($res);
   }

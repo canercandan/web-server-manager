@@ -6,9 +6,9 @@
 // Maintainer: 
 // Created: Mon Feb  9 10:55:58 2009 (+0200)
 // Version: 
-// Last-Updated: Tue Mar  3 11:00:35 2009 (+0200)
+// Last-Updated: Tue Mar  3 15:01:26 2009 (+0200)
 //           By: Caner Candan
-//     Update #: 62
+//     Update #: 67
 // URL: 
 // Keywords: 
 // Compatibility: 
@@ -62,13 +62,13 @@
 
 # define VIRTUALHOST				\
   "<VirtualHost *:80>\n"			\
-  "ServerAdmin root@localhost\n"		\
-  "DocumentRoot %s/%d/www\n"			\
+  "ServerAdmin root@%s\n"			\
+  "DocumentRoot %s/%s/www\n"			\
   "ServerName %s\n"				\
   "ServerAlias www.%s\n"			\
-  "ErrorLog %s/%d/logs/error.log\n"		\
-  "CustomLog %s/%d/logs/access.log common\n"	\
-  "<Directory \"%s/%d/www\">\n"			\
+  "ErrorLog %s/%s/logs/error.log\n"		\
+  "CustomLog %s/%s/logs/access.log common\n"	\
+  "<Directory \"%s/%s/www\">\n"			\
   "AllowOverride All\n"				\
   "Order allow,deny\n"				\
   "Allow from all\n"				\

@@ -4,11 +4,11 @@
 ## Description: 
 ## Author: Caner Candan
 ## Maintainer: 
-## Created: Mon Feb  2 17:07:05 2009 (+0200)
+## Created: Mon Jan  5 22:53:36 2009 (+0200)
 ## Version: 
-## Last-Updated: Wed Mar  4 11:04:46 2009 (+0200)
+## Last-Updated: Wed Mar  4 09:01:19 2009 (+0200)
 ##           By: Caner Candan
-##     Update #: 18
+##     Update #: 21
 ## URL: 
 ## Keywords: 
 ## Compatibility: 
@@ -45,19 +45,19 @@
 ## 
 ### Code:
 
-PATTERN		=	escienta
+PATTERN		=	proftpd
 
-PATH_BIN	=	bin
-PATH_SRC	=	src
-PATH_INCLUDE	=	include
-PATH_LIBRARY	=	lib
+PATH_BIN	=	.
+PATH_SRC	=	.
+PATH_INCLUDE	=	../../include
+PATH_LIBRARY	=	../../lib
 PATH_TAR	=	tar
 
 FILE_README	=	README
 FILE_COPYRIGHT	=	COPYRIGHT
 FILE_VERSION	=	VERSION
 
-NAME		=	$(PATH_BIN)/$(PATTERN)
+NAME		=	$(PATH_BIN)/mod_$(PATTERN).so
 
 DOCS		=	\
 			$(FILE_README)		\
@@ -65,16 +65,14 @@ DOCS		=	\
 			$(FILE_VERSION)
 
 HEADERS		=	\
-			$(PATH_INCLUDE)/$(PATTERN).h	\
-			$(PATH_INCLUDE)/loadmod.h	\
+			$(PATH_INCLUDE)/escienta.h	\
+			$(PATH_INCLUDE)/list.h		\
 			$(PATH_INCLUDE)/select.h	\
-			$(PATH_INCLUDE)/list.h
+			$(PATH_INCLUDE)/loadmod.h	\
+			$(PATH_SRC)/proftpd.h
 
 SRCS		=	\
-			$(PATH_SRC)/main.c			\
-			$(PATH_SRC)/recv_callback.c		\
-			$(PATH_SRC)/addclient_callback.c	\
-			$(PATH_SRC)/delclient_callback.c
+			$(PATH_SRC)/call.c
 
 OBJS		=	$(SRCS:.c=.o)
 
@@ -110,14 +108,9 @@ $(NAME)		:	$(OBJS)
 			-@$(ECHON) "*** Making directory $(PATH_BIN) "
 			-@$(MKDIR) $(PATH_BIN) && $(SUCCESS) || $(FAILED)
 			-@$(ECHON) "*** Compiling $(OBJS) to $@ "
-			-@$(CC) -o $@ $(OBJS) $(LDFLAGS) && $(SUCCESS) || $(FAILED)
+			-@$(CC) -o $@ -shared $(OBJS) $(LDFLAGS) && $(SUCCESS) || $(FAILED)
 
 all		:	$(NAME)
-			-@make -C modules/apache22
-			-@make -C modules/auth
-			-@make -C modules/logger
-			-@make -C modules/proftpd
-			-@make -C modules/mysqld
 
 clean		:
 			-@$(ECHON) "*** Removing $(PATH_SRC)/*~ "
@@ -132,11 +125,6 @@ fclean		:	clean
 			-@$(RM) $(NAME) && $(SUCCESS) || $(FAILED)
 			-@$(ECHON) "*** Removing $(PATH_BIN) "
 			-@$(RMDIR) $(PATH_BIN) && $(SUCCESS) || $(FAILED)
-			-@make fclean -C modules/apache22
-			-@make fclean -C modules/auth
-			-@make fclean -C modules/logger
-			-@make fclean -C modules/proftpd
-			-@make fclean -C modules/mysqld
 
 re		:	fclean all
 
@@ -150,38 +138,20 @@ tar		:
 			-@$(ECHON) "*** Updating $(FILE_VERSION) step 2/2 "
 			-@$(MV) $(FILE_VERSION)_NEW $(FILE_VERSION) && $(SUCCESS) || $(FAILED)
 			-@$(ECHON) "*** Compressing sources "
-			-@$(TAR) $(PATH_TAR)/$(PATTERN)-`$(CAT) $(FILE_VERSION)`.tgz Makefile $(DOCS) $(HEADERS) $(SRCS) && $(SUCCESS) || $(FAILED)
+			-@$(TAR) $(PATH_TAR)/mod$(PATTERN)-`$(CAT) $(FILE_VERSION)`.tgz Makefile $(DOCS) $(HEADERS) $(SRCS) && $(SUCCESS) || $(FAILED)
 			-@$(ECHO) "*** New version `$(CAT) $(FILE_VERSION)` is available "
 
-.PHONY		:	all clean fclean re tar shared
+.PHONY		:	all clean fclean re tar
 
 .c.o		:
 			-@$(ECHON) "*** Compiling $< to $@ "
 			-@$(CC) $(CFLAGS) -c $< -o $@ && $(SUCCESS) || $(FAILED)
 
-$(PATH_SRC)/main.o	:	\
-				$(PATH_SRC)/main.c	\
+$(PATH_SRC)/call.o	:	\
+				$(PATH_SRC)/call.c	\
 				$(HEADERS)
-				-@$(ECHON) "*** Compiling $(PATH_SRC)/main.c to $@ "
-				-@$(CC) $(CFLAGS) -c $(PATH_SRC)/main.c -o $@ && $(SUCCESS) || $(FAILED)
-
-$(PATH_SRC)/recv_callback.o	:	\
-				$(PATH_SRC)/recv_callback.c	\
-				$(HEADERS)
-				-@$(ECHON) "*** Compiling $(PATH_SRC)/recv_callback.c to $@ "
-				-@$(CC) $(CFLAGS) -c $(PATH_SRC)/recv_callback.c -o $@ && $(SUCCESS) || $(FAILED)
-
-$(PATH_SRC)/addclient_callback.o	:	\
-				$(PATH_SRC)/addclient_callback.c	\
-				$(HEADERS)
-				-@$(ECHON) "*** Compiling $(PATH_SRC)/addclient_callback.c to $@ "
-				-@$(CC) $(CFLAGS) -c $(PATH_SRC)/addclient_callback.c -o $@ && $(SUCCESS) || $(FAILED)
-
-$(PATH_SRC)/delclient_callback.o	:	\
-				$(PATH_SRC)/delclient_callback.c	\
-				$(HEADERS)
-				-@$(ECHON) "*** Compiling $(PATH_SRC)/delclient_callback.c to $@ "
-				-@$(CC) $(CFLAGS) -c $(PATH_SRC)/delclient_callback.c -o $@ && $(SUCCESS) || $(FAILED)
+				-@$(ECHON) "*** Compiling $(PATH_SRC)/call.c to $@ "
+				-@$(CC) $(CFLAGS) -c $(PATH_SRC)/call.c -o $@ && $(SUCCESS) || $(FAILED)
 
 ######################################################################
 ### Makefile ends here

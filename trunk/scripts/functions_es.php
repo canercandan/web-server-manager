@@ -7,9 +7,9 @@
  * Maintainer: 
  * Created: Thu Feb  5 15:18:11 2009 (+0200)
  * Version: 
- * Last-Updated: Tue Mar  3 10:51:46 2009 (+0200)
+ * Last-Updated: Wed Mar  4 08:36:36 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 57
+ *     Update #: 63
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -63,7 +63,11 @@ function	es_connectto($ip, $port, $login, $passwd)
   stream_set_timeout($es_arr[FP], 5);
   es_sendto("login $login $passwd\n");
   if (($res = es_recvfrom()) == "login ko\n")
-    exit(-1);
+    {
+      var_dump($res);
+      exit(-1);
+    }
+  return ($res);
 }
 
 function	es_sendto($mesg)

@@ -1,14 +1,14 @@
-// escienta.h --- 
+// mysqld.h --- 
 // 
-// Filename: escienta.h
+// Filename: mysqld.h
 // Description: 
 // Author: Caner Candan
 // Maintainer: 
-// Created: Mon Feb  2 17:15:52 2009 (+0200)
+// Created: Wed Mar  4 08:54:34 2009 (+0200)
 // Version: 
-// Last-Updated: Wed Mar  4 11:20:46 2009 (+0200)
+// Last-Updated: Wed Mar  4 08:54:40 2009 (+0200)
 //           By: Caner Candan
-//     Update #: 19
+//     Update #: 1
 // URL: 
 // Keywords: 
 // Compatibility: 
@@ -45,17 +45,12 @@
 
 // Code:
 
-#ifndef __ESCIENTA_H__
-# define __ESCIENTA_H__
-
-# include <loadmod.h>
-# include <select.h>
+#ifndef __MYSQLD_H__
+# define __MYSQLD_H__
 
 /*
 ** defines
 */
-
-# define VERSION	0.1
 
 /*
 ** type definitions
@@ -65,22 +60,9 @@
 ** enumerators
 */
 
-typedef enum {STAT_NOT, STAT_IN, STAT_OUT}	t_client_stat;
-
 /*
 ** structures
 */
-
-typedef struct	s_client_data
-{
-  t_client_stat	stat;
-}		t_client_data;
-
-typedef struct	s_cmd
-{
-  char		*name;
-  t_client_stat	stat;
-}		t_cmd;
 
 /*
 ** variables
@@ -90,11 +72,7 @@ typedef struct	s_cmd
 ** functions
 */
 
-void	recv_callback(t_select*, t_client*);
-void	addclient_callback(t_select*, t_client*);
-void	delclient_callback(t_select*, t_client*);
-
-#endif /* !__ESCIENTA_H__ */
+#endif /* !__MYSQLD_H__ */
 
 // 
-// escienta.h ends here
+// mysqld.h ends here

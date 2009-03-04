@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Wed Mar  4 11:21:08 2009 (+0200)
+ * Last-Updated: Wed Mar  4 11:25:19 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 422
+ *     Update #: 433
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -48,11 +48,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <string.h>
-#include <stdio.h>
 #include <escienta.h>
-#include "apache22.h"
+#include "proftpd.h"
 
 static void	reload()
 {
@@ -60,8 +58,8 @@ static void	reload()
 
   if ((pid = fork()) == 0)
     {
-      execl("/usr/local/etc/rc.d/apache22",
-	    "apache22", "reload", (char*)0);
+      execl("/usr/local/etc/rc.d/proftpd",
+	    "proftpd", "reload", (char*)0);
       exit(-1);
     }
 }
@@ -78,9 +76,6 @@ static void	on_unload(void)
 
 static t_res	create(t_hook_result *t)
 {
-  char		path[BUFF_SIZE];
-  char		buf[1024];
-  int		fd;
   char		*id;
   char		*domain;
   t_client	*client;
@@ -94,37 +89,6 @@ static t_res	create(t_hook_result *t)
       return (R_ERROR);
     }
 
-  snprintf(path, BUFF_SIZE, "%s/%s", HOST_DIR, id);
-  mkdir(path, 0777);
-  snprintf(path, BUFF_SIZE, "%s/%s/www", HOST_DIR, id);
-  mkdir(path, 0777);
-  snprintf(path, BUFF_SIZE, "%s/%s/logs", HOST_DIR, id);
-  mkdir(path, 0777);
-
-  snprintf(path, BUFF_SIZE, "%s/%s", CONF_DIR, id);
-  mkdir(path, 0777);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/main.conf", CONF_DIR, id);
-  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
-    return (R_ERROR);
-  snprintf(buf, 1024, VIRTUALHOST,
-	   domain, HOST_DIR, id, domain, domain,
-	   HOST_DIR, id, HOST_DIR, id, HOST_DIR, id);
-  write(fd, buf, strlen(buf));
-  close(fd);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, ID_FILE);
-  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
-    return (R_ERROR);
-  write(fd, id, strlen(id));
-  close(fd);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, DOMAIN_FILE);
-  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
-    return (R_ERROR);
-  write(fd, domain, strlen(domain));
-  close(fd);
-
   free(id);
   free(domain);
 
@@ -135,37 +99,19 @@ static t_res	delete(t_hook_result *t)
 {
   t_client	*client;
   char		*id;
-  char		path[BUFF_SIZE];
 
   client = t->data;
   if ((id = select_recv_field(client, 1)) == NULL)
     return (R_ERROR);
 
-  snprintf(path, BUFF_SIZE, "%s/%s/main.conf", CONF_DIR, id);
-  unlink(path);
-  snprintf(path, BUFF_SIZE, "%s/%s", CONF_DIR, id);
-  rmdir(path);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, ID_FILE);
-  unlink(path);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, DOMAIN_FILE);
-  unlink(path);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/logs", HOST_DIR, id);
-  rmdir(path);
-  snprintf(path, BUFF_SIZE, "%s/%s/www", HOST_DIR, id);
-  rmdir(path);
-  snprintf(path, BUFF_SIZE, "%s/%s", HOST_DIR, id);
-  rmdir(path);
-
   free(id);
+
   return (R_END);
 }
 
 void	call(t_module *t)
 {
-  loadmod_set_module_name(t, "apache22", 0.1);
+  loadmod_set_module_name(t, "proftpd", 0.1);
   loadmod_set_module_callback(t, on_load, on_unload);
   loadmod_add_hook_point(t, "web_create", MIDDLE, create);
   loadmod_add_hook_point(t, "web_delete", MIDDLE, delete);

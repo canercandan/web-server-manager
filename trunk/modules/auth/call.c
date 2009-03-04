@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Sun Mar  1 13:12:38 2009 (+0200)
+ * Last-Updated: Wed Mar  4 11:25:57 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 215
+ *     Update #: 220
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -103,6 +103,9 @@ void	call(t_module *t)
   loadmod_add_hook_point(t, "login", MIDDLE, login);
   loadmod_add_hook_point(t, "logout", MIDDLE, logout);
   loadmod_add_hook_point(t, "status", MIDDLE, status);
+  loadmod_add_comp_version(t, 0.1, NULL);
+  loadmod_add_comp_version(t, 0.2, NULL);
+  loadmod_add_comp_version(t, 0.3, NULL);
 }
 
 /* call.c ends here */
