@@ -6,9 +6,9 @@
  * Maintainer: 
  * Created: Mon Jan  5 22:49:26 2009 (+0200)
  * Version: 
- * Last-Updated: Wed Mar  4 11:21:08 2009 (+0200)
+ * Last-Updated: Thu Mar  5 08:59:36 2009 (+0200)
  *           By: Caner Candan
- *     Update #: 422
+ *     Update #: 465
  * URL: 
  * Keywords: 
  * Compatibility: 
@@ -76,11 +76,58 @@ static void	on_unload(void)
   reload();
 }
 
-static t_res	create(t_hook_result *t)
+static t_res	write_in_a_file(char *path, char *buf)
+{
+  int		fd;
+
+  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
+    return (R_ERROR);
+  write(fd, buf, strlen(buf));
+  close(fd);
+  return (R_CONTINUE);
+}
+
+static t_res	make_some_directories(char *id)
+{
+  char		path[BUFF_SIZE];
+
+  snprintf(path, BUFF_SIZE, "%s/%s", HOST_DIR, id);
+  if (mkdir(path, 0777) < 0)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s/www", HOST_DIR, id);
+  if (mkdir(path, 0777) < 0)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s/logs", HOST_DIR, id);
+  if (mkdir(path, 0777) < 0)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s", CONF_DIR, id);
+  if (mkdir(path, 0777) < 0)
+    return (R_ERROR);
+  return (R_CONTINUE);
+}
+
+static t_res	make_some_files(char *id, char *domain)
 {
   char		path[BUFF_SIZE];
   char		buf[1024];
-  int		fd;
+
+  snprintf(path, BUFF_SIZE, "%s/%s/main.conf", CONF_DIR, id);
+  snprintf(buf, sizeof(buf), VIRTUALHOST,
+	   domain, HOST_DIR, id, domain, domain,
+	   HOST_DIR, id, HOST_DIR, id, HOST_DIR, id);
+  if (write_in_a_file(path, buf) == R_ERROR)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, ID_FILE);
+  if (write_in_a_file(path, id) == R_ERROR)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, DOMAIN_FILE);
+  if (write_in_a_file(path, domain) == R_ERROR)
+    return (R_ERROR);
+  return (R_CONTINUE);
+}
+
+static t_res	create(t_hook_result *t)
+{
   char		*id;
   char		*domain;
   t_client	*client;
@@ -93,72 +140,62 @@ static t_res	create(t_hook_result *t)
       free(id);
       return (R_ERROR);
     }
-
-  snprintf(path, BUFF_SIZE, "%s/%s", HOST_DIR, id);
-  mkdir(path, 0777);
-  snprintf(path, BUFF_SIZE, "%s/%s/www", HOST_DIR, id);
-  mkdir(path, 0777);
-  snprintf(path, BUFF_SIZE, "%s/%s/logs", HOST_DIR, id);
-  mkdir(path, 0777);
-
-  snprintf(path, BUFF_SIZE, "%s/%s", CONF_DIR, id);
-  mkdir(path, 0777);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/main.conf", CONF_DIR, id);
-  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
+  if (make_some_directories(id) == R_ERROR)
     return (R_ERROR);
-  snprintf(buf, 1024, VIRTUALHOST,
-	   domain, HOST_DIR, id, domain, domain,
-	   HOST_DIR, id, HOST_DIR, id, HOST_DIR, id);
-  write(fd, buf, strlen(buf));
-  close(fd);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, ID_FILE);
-  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
+  if (make_some_files(id, domain) == R_ERROR)
     return (R_ERROR);
-  write(fd, id, strlen(id));
-  close(fd);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, DOMAIN_FILE);
-  if ((fd = open(path, O_WRONLY | O_CREAT, 0644)) < 0)
-    return (R_ERROR);
-  write(fd, domain, strlen(domain));
-  close(fd);
-
   free(id);
   free(domain);
-
   return (R_END);
+}
+
+static t_res	remove_some_directories(char *id)
+{
+  char		path[BUFF_SIZE];
+
+  snprintf(path, BUFF_SIZE, "%s/%s", CONF_DIR, id);
+  if (rmdir(path) < 0)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s/logs", HOST_DIR, id);
+  if (rmdir(path) < 0)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s/www", HOST_DIR, id);
+  if (rmdir(path) < 0)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s", HOST_DIR, id);
+  if (rmdir(path) < 0)
+    return (R_ERROR);
+  return (R_CONTINUE);
+}
+
+static t_res	remove_some_files(char *id)
+{
+  char		path[BUFF_SIZE];
+
+  snprintf(path, BUFF_SIZE, "%s/%s/main.conf", CONF_DIR, id);
+  if (unlink(path) < 0)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, ID_FILE);
+  if (unlink(path) < 0)
+    return (R_ERROR);
+  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, DOMAIN_FILE);
+  if (unlink(path) < 0)
+    return (R_ERROR);
+  return (R_CONTINUE);
 }
 
 static t_res	delete(t_hook_result *t)
 {
   t_client	*client;
   char		*id;
-  char		path[BUFF_SIZE];
 
   client = t->data;
   if ((id = select_recv_field(client, 1)) == NULL)
     return (R_ERROR);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/main.conf", CONF_DIR, id);
-  unlink(path);
-  snprintf(path, BUFF_SIZE, "%s/%s", CONF_DIR, id);
-  rmdir(path);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, ID_FILE);
-  unlink(path);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/%s", HOST_DIR, id, DOMAIN_FILE);
-  unlink(path);
-
-  snprintf(path, BUFF_SIZE, "%s/%s/logs", HOST_DIR, id);
-  rmdir(path);
-  snprintf(path, BUFF_SIZE, "%s/%s/www", HOST_DIR, id);
-  rmdir(path);
-  snprintf(path, BUFF_SIZE, "%s/%s", HOST_DIR, id);
-  rmdir(path);
-
+  if (remove_some_directories(id) == R_ERROR)
+    return (R_ERROR);
+  if (remove_some_files(id) == R_ERROR)
+    return (R_ERROR);
   free(id);
   return (R_END);
 }

@@ -13,14 +13,14 @@ $domains = array(120 => 'google.fr',
 		 340 => 'yahoo.com',
 		 555 => 'lycos.fr');
 
-/* echo "*** web_create\n"; */
+echo "*** web_create\n";
 
-/* foreach ($domains as $key => $value) */
-/*   { */
-/*     es_sendto("web_create $key $value\n"); */
-/*     $res = explode(' ', trim(es_recvfrom())); */
-/*     var_dump($res); */
-/*   } */
+foreach ($domains as $key => $value)
+  {
+    es_sendto("web_create $key $value\n");
+    $res = explode(' ', trim(es_recvfrom()));
+    var_dump($res);
+  }
 
 echo "*** web_delete\n";
 
