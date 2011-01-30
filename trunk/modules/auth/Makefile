@@ -65,7 +65,7 @@ DOCS		=	\
 			$(FILE_VERSION)
 
 HEADERS		=	\
-			$(PATH_INCLUDE)/escienta.h	\
+			$(PATH_INCLUDE)/webserver.h	\
 			$(PATH_INCLUDE)/list.h		\
 			$(PATH_INCLUDE)/select.h	\
 			$(PATH_INCLUDE)/loadmod.h

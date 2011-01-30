@@ -52,7 +52,7 @@
 ** defines
 */
 
-# define CONF_DIR	"/usr/local/etc/apache22/escienta"
+# define CONF_DIR	"/usr/local/etc/apache22/webserver"
 # define HOST_DIR	"/hosts"
 
 # define ID_FILE	".id"

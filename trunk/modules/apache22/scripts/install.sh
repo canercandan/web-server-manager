@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 ID=`id -u`
-CONF_DIR="/usr/local/etc/apache22/escienta"
+CONF_DIR="/usr/local/etc/apache22/webserver"
 HOST_DIR="/hosts"
 
 success()

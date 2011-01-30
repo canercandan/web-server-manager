@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 ID=`id -u`
-CONF_DIR="/usr/local/etc/mysqld/escienta"
+CONF_DIR="/usr/local/etc/mysqld/webserver"
 
 success()
 {

@@ -1,6 +1,6 @@
-// escienta.h --- 
+// webserver.h --- 
 // 
-// Filename: escienta.h
+// Filename: webserver.h
 // Description: 
 // Author: Caner Candan
 // Maintainer: 
@@ -45,8 +45,8 @@
 
 // Code:
 
-#ifndef __ESCIENTA_H__
-# define __ESCIENTA_H__
+#ifndef __WEBSERVER_H__
+# define __WEBSERVER_H__
 
 # include <loadmod.h>
 # include <select.h>
@@ -94,7 +94,7 @@ void	recv_callback(t_select*, t_client*);
 void	addclient_callback(t_select*, t_client*);
 void	delclient_callback(t_select*, t_client*);
 
-#endif /* !__ESCIENTA_H__ */
+#endif /* !__WEBSERVER_H__ */
 
 // 
-// escienta.h ends here
+// webserver.h ends here

@@ -45,7 +45,7 @@
 ## 
 ### Code:
 
-PATTERN		=	escienta
+PATTERN		=	webserver
 
 PATH_BIN	=	bin
 PATH_SRC	=	src

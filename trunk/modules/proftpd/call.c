@@ -49,7 +49,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <escienta.h>
+#include <webserver.h>
 #include "proftpd.h"
 
 static void	reload()

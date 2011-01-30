@@ -44,7 +44,7 @@
 
 /* Code: */
 
-#include <escienta.h>
+#include <webserver.h>
 
 char	user[] = "demo";
 char	passwd[] = "demo";

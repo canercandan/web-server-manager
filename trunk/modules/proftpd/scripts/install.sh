@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 ID=`id -u`
-CONF_DIR="/usr/local/etc/proftpd/escienta"
+CONF_DIR="/usr/local/etc/proftpd/webserver"
 HOST_DIR="/hosts"
 
 success()
