@@ -1,1 +1,0 @@
-/home/candan_c/cu/rendu/library/loadmod/include/loadmod.h
